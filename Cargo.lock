@@ -3118,6 +3118,7 @@ dependencies = [
  "crossterm",
  "eframe",
  "egui",
+ "fastrand 2.3.0",
  "portable-pty",
  "tokio",
 ]

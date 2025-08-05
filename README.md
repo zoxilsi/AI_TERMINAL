@@ -1,53 +1,242 @@
-# Rust Desktop Terminal Emulator
+# AI Terminal
 
-A cross-platform desktop terminal application built with Rust that provides an authentic terminal experience using modern GUI frameworks. This project demonstrates advanced Rust concepts including system programming, GUI development, process management, and real-time user interaction.
+A modern, cross-platform terminal emulator built with Rust and egui, featuring a PowerShell-inspired design with advanced functionality.
 
-## 🏗️ Project Architecture & Design Principles
+![Terminal Screenshot](screenshot.png)
 
-### Core Architecture Overview
+## 🚀 Features
 
-This terminal emulator follows a **layered architecture** with clear separation of concerns:
+- **Cross-Platform GUI**: Built with egui/eframe for Windows, Linux, and macOS
+- **PowerShell-Inspired Design**: Colorful headers and modern UI
+- **Git Integration**: Dynamic branch detection and display
+- **Smart Autocomplete**: Command and flag suggestions
+- **Performance Optimized**: 60 FPS rendering with efficient memory management
+- **Full Text Editing**: Copy/paste/cut with keyboard shortcuts (Ctrl+A/C/V/X)
+- **Command History**: Navigate through previous commands with arrow keys
+- **Built-in Commands**: `cd`, `pwd`, `clear`, `help`, `history`, and more
+
+## 📋 Requirements
+
+- Rust 1.70+ 
+- Cargo package manager
+- Git (for git integration features)
+
+## 🛠️ Installation
+
+### From Source
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/AI_TERMINAL.git
+cd AI_TERMINAL
+
+# Build and run
+cargo run --release
+```
+
+### Dependencies
+
+The project uses minimal dependencies for maximum performance:
+
+```toml
+[dependencies]
+eframe = "0.24"  # Cross-platform GUI framework
+egui = "0.24"    # Immediate mode GUI library
+```
+
+## 🎯 Quick Start
+
+1. **Launch the terminal**: Run `cargo run` or execute the built binary
+2. **Basic commands**: Try `ls`, `pwd`, `cd`, `help`
+3. **Git integration**: Navigate to a git repository to see branch info
+4. **Autocomplete**: Start typing a command and press Tab
+5. **History**: Use ↑/↓ arrows to browse command history
+6. **Text editing**: Use Ctrl+C/V for copy/paste, Ctrl+A for select all
+
+## 📚 Usage Guide
+
+### Basic Commands
+
+```bash
+# File operations
+ls -la          # List files with details
+cd ~/Documents  # Change directory
+pwd             # Print working directory
+mkdir new_dir   # Create directory
+
+# Terminal operations
+clear           # Clear screen (or Ctrl+L)
+help            # Show help information
+history         # Show command history
+exit            # Exit terminal (or Ctrl+D)
+```
+
+### Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Enter` | Execute command |
+| `Tab` | Autocomplete/cycle suggestions |
+| `↑/↓` | Browse command history |
+| `Ctrl+C` | Interrupt current command |
+| `Ctrl+L` | Clear screen |
+| `Ctrl+D` | Exit terminal |
+| `Ctrl+A` | Select all text |
+| `Ctrl+C/V/X` | Copy/Paste/Cut |
+| `Home/End` | Move cursor to start/end |
+| `Esc` | Hide autocomplete |
+
+### Git Integration
+
+When you're in a Git repository, the terminal automatically detects and displays:
+- Current branch name with ⚡ icon
+- Repository status in the PowerShell-style header
+- Updates dynamically when changing directories
+
+### Autocomplete System
+
+The terminal provides intelligent suggestions for:
+- **Commands**: `ls`, `cd`, `git`, `grep`, etc.
+- **Flags**: `-l`, `-a`, `--help` based on the command
+- **Context-aware**: Different suggestions based on what you're typing
+
+## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────────┐
-│                 User Interface                  │
-│               (egui/eframe)                     │
-├─────────────────────────────────────────────────┤
-│              Application Logic                  │
-│            (TerminalApp struct)                 │
-├─────────────────────────────────────────────────┤
-│              Command Processing                 │
-│         (Built-in & System Commands)           │
-├─────────────────────────────────────────────────┤
-│              System Interface                   │
-│       (std::process, std::env, std::fs)        │
-└─────────────────────────────────────────────────┘
+┌─────────────────────────────────────────┐
+│               main()                    │
+│        Application Entry Point         │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│            TerminalApp                  │
+│         Main Application State          │
+├─────────────────────────────────────────┤
+│ • Terminal Lines Buffer (VecDeque)      │
+│ • Input Management & Cursor             │
+│ • Command History & Navigation          │
+│ • Autocomplete System                   │
+│ • Git Integration                       │
+│ • Performance Optimizations             │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│          eframe::App Trait              │
+│        GUI Rendering & Events           │
+├─────────────────────────────────────────┤
+│ • Keyboard/Mouse Event Handling         │
+│ • PowerShell-style UI Rendering         │
+│ • Cross-platform Compatibility          │
+│ • Efficient Repainting (60 FPS)         │
+└─────────────────────────────────────────┘
 ```
 
-### Design Philosophy
+## 🎨 Customization
 
-1. **Authenticity First**: Every visual and behavioral element mimics real terminal interfaces
-2. **Memory Safety**: Leverages Rust's ownership system for safe concurrent operations
-3. **Cross-Platform Compatibility**: Uses portable abstractions for file system and process operations
-4. **Performance**: Immediate-mode GUI for responsive real-time rendering
-5. **Extensibility**: Modular command system allows easy addition of new features
+### Themes
 
-## 🔍 Working Principles & Implementation Details
+The terminal uses a dark theme optimized for readability:
+- Background: `RGB(12, 12, 20)` - Deep blue
+- Text: Various colors for different content types
+- Headers: Colorful PowerShell-inspired design
 
-### 1. GUI Framework Architecture
+### Adding Custom Commands
 
-**Technology**: egui (Immediate Mode GUI) + eframe (Application Framework)
+To add new built-in commands, edit the `execute_command()` function in `src/main.rs`:
 
 ```rust
-// Core application structure
-struct TerminalApp {
-    lines: Vec<TerminalLine>,      // Output buffer
-    input: String,                 // Current input line
-    history: Vec<String>,          // Command history
-    history_index: Option<usize>,  // History navigation state
-    current_dir: PathBuf,          // Working directory tracking
-    cursor_visible: bool,          // Cursor blinking state
-    last_blink: Instant,          // Timing for cursor animation
+match cmd_name.as_str() {
+    "your_command" => {
+        // Your command implementation
+        self.add_line("Command output", false, false);
+        self.show_prompt();
+        return;
+    }
+    // ... existing commands
+}
+```
+
+### Extending Autocomplete
+
+Add new commands and flags to the initialization in `TerminalApp::new()`:
+
+```rust
+// Add to common_commands
+"your_command".to_string(),
+
+// Add command-specific flags
+command_flags.insert("your_command".to_string(), vec![
+    "-flag1".to_string(),
+    "-flag2".to_string(),
+]);
+```
+
+## 🔧 Performance
+
+The terminal is optimized for smooth performance:
+- **Memory Management**: Limited buffer (500 lines) with FIFO removal
+- **Rendering**: Efficient cursor blinking and repaint scheduling
+- **Autocomplete**: Limited suggestions (5 items) for fast response
+- **Event Processing**: Optimized keyboard and text input handling
+
+## 📖 Complete Documentation
+
+For detailed documentation including line-by-line code explanations, see [DOCUMENTATION.md](DOCUMENTATION.md).
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Setup
+
+```bash
+# Clone and setup
+git clone https://github.com/yourusername/AI_TERMINAL.git
+cd AI_TERMINAL
+
+# Install Rust (if not already installed)
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Build and test
+cargo build
+cargo test
+cargo run
+```
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [egui](https://github.com/emilk/egui) - Immediate mode GUI framework
+- [eframe](https://github.com/emilk/egui/tree/master/crates/eframe) - Cross-platform application framework
+- PowerShell - UI design inspiration
+- Rust community for excellent tooling and libraries
+
+## 🐛 Bug Reports & Feature Requests
+
+Please use the [GitHub Issues](https://github.com/yourusername/AI_TERMINAL/issues) page to report bugs or request features.
+
+## 📊 Project Status
+
+- ✅ Core terminal functionality
+- ✅ PowerShell-inspired UI
+- ✅ Git integration
+- ✅ Autocomplete system
+- ✅ Performance optimizations
+- ✅ Cross-platform support
+- ✅ Text editing features
+- 🔄 Additional terminal features (ongoing)
+- 📋 Plugin system (planned)
+
+---
+
+**Built with ❤️ using Rust and egui**
 }
 ```
 
