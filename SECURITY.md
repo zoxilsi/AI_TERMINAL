@@ -19,7 +19,7 @@ We take security vulnerabilities seriously. If you discover a security vulnerabi
 
 Instead, please:
 
-1. **Email**: Send details to [security@your-domain.com] (replace with your email)
+1. **Email**: Send details to [hi.zoxilsi@gmail.com]
 2. **Subject**: Include "AI Terminal Security Vulnerability" in the subject line
 3. **Include**:
    - Description of the vulnerability
@@ -73,7 +73,7 @@ We monitor our dependencies for security vulnerabilities:
 ## Contact
 
 For security-related questions or concerns:
-- Email: [your-security-email@domain.com]
+- Email: [hi.zoxilsi@gmail.com]
 - Create a private issue if email isn't available
 
 Thank you for helping keep AI Terminal secure! 🔒
